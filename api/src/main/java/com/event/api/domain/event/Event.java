@@ -1,6 +1,6 @@
 package com.event.api.domain.event;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.UUID;
 
 

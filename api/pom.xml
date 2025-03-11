@@ -67,11 +67,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
-			
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.12.782</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>
