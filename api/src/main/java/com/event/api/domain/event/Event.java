@@ -29,6 +29,4 @@ public class Event {
     private boolean remote;
     private String img_url;
     private String event_url;
-
-
 }   
