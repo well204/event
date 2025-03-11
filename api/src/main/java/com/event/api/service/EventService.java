@@ -5,22 +5,33 @@ import java.util.UUID;
 import java.io.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.event.api.domain.event.Event;
 import com.event.api.domain.event.EventRequestDTO;
 
 @Service
 public class EventService {
-    public Event createEvent(EventRequestDTO data){
-        private final AmazonS3 s3Client;
 
+    @Value("${aws.bucket.name}")
+    private String bucketName;
+
+    private final AmazonS3 s3Client; 
+
+    @Autowired
+    public EventService(AmazonS3 s3Client) {  
+        this.s3Client = s3Client;
+    }
+
+    public Event createEvent(EventRequestDTO data) {
         String imageUrl = null;
 
         if (data.image() != null) {
-            imageUrl = this.uploadImg(data.image());
+            imageUrl = this.uploadImg(data.image()); 
         }
 
         Event newEvent = new Event();
@@ -33,20 +44,20 @@ public class EventService {
         return newEvent;
     }
 
-    private String uploadImg(MultipartFile multipartfilefile) {
-        String imgName = UUID.randomUUID() + "-" + multipartfilefile.getOriginalFilename();
+    private String uploadImg(MultipartFile multipartFile) {
+        String imgName = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
 
         try {
-            File file = this.corvertMultipartFile(multipartfilefile);
-        } catch(Exception e){}
-        return " ";
-    }
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(multipartFile.getSize());
+            
+            s3Client.putObject(bucketName, imgName, multipartFile.getInputStream(), metadata);
+            
 
-    private File corvertMultipartFile(MultipartFile multipartFile) throws IOException {
-        File conFile = new File(multipartFile.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(conFile);
-        fos.write(multipartFile.getBytes());
-        fos.close();
-        return conFile;
+            return s3Client.getUrl(bucketName, imgName).toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
