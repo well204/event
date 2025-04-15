@@ -56,14 +56,14 @@ public class EventService {
         try {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(multipartFile.getSize());
-            metadata.setContentType(multipartFile.getContentType()); // Set content type
+            metadata.setContentType(multipartFile.getContentType()); 
     
             s3Client.putObject(bucketName, imgName, multipartFile.getInputStream(), metadata);
     
             return s3Client.getUrl(bucketName, imgName).toString();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to upload image to S3", e); // Throw a custom exception
+            throw new RuntimeException("Failed to upload image to S3", e); 
         }
     }
 }
